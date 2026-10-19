@@ -297,7 +297,10 @@ Contributions, suggestions, and bug reports are welcome.
 
 ## 📜 License
 
-No license has been specified yet. Add a license file before distributing the project under an open-source license.
+This project is licensed under the [MIT License](LICENSE).
+
+You are free to use, copy, modify, merge, publish, distribute, sublicense, and sell copies of this software, subject to the terms and conditions of the MIT License. See the [LICENSE](LICENSE) file for details.
+
 
 ---
 
