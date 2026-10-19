@@ -1,0 +1,118 @@
+/* ==========================================================================
+   Papers panel and PDF reader
+   ========================================================================== */
+
+.papers-panel__upload { margin-left: auto; padding: 10px 16px; }
+
+.papers-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+}
+
+/* ---------- Paper row ---------- */
+.paper-item {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.paper-item:hover {
+  background: var(--surface-2);
+  border-color: color-mix(in srgb, var(--primary) 45%, var(--border));
+}
+
+.paper {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+  padding: 14px 8px 14px 16px;
+  border: 0;
+  border-radius: 10px 0 0 10px;
+  background: transparent;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.paper:focus-visible { outline-offset: -2px; }
+
+.paper__icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px; height: 40px;
+  border-radius: 8px;
+  background: var(--pdf-bg);
+  color: var(--pdf);
+}
+
+.paper__body { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
+.paper__title { font-size: 14px; font-weight: 500; line-height: 1.4; color: var(--text); }
+
+.paper__meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.paper__meta:empty { display: none; }
+.paper__pages { font-size: 12.5px; color: var(--text-muted); }
+.paper__meta .badge { margin-left: auto; }
+
+.paper__chevron { color: var(--text-muted); }
+
+/* ---------- Delete button ---------- */
+.paper-item__delete {
+  display: flex;
+  align-items: center;
+  flex: none;
+  padding: 0 12px 0 4px;
+}
+.paper-item__delete button {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.paper-item__delete button .icon { width: 18px; height: 18px; }
+.paper-item__delete button:hover,
+.paper-item__delete button:focus-visible {
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+  color: var(--danger);
+}
+
+/* ---------- Status badge ---------- */
+.badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.badge--indexed { background: var(--badge-ok-bg); color: var(--badge-ok-text); }
+.badge--failed { background: #fde4e1; color: #b42318; }
+[data-theme="dark"] .badge--failed { background: #3d1b19; color: #f97066; }
+
+.papers-empty {
+  padding: 32px 16px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+@media (max-width: 960px) {
+  .papers-panel { max-height: none; }
+  .papers-list { overflow: visible; }
+}

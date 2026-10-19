@@ -1,0 +1,53 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in · RAG Researcher</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script src="{% static 'chatapp/js/theme.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'chatapp/css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'chatapp/css/upload.css' %}">
+  <link rel="stylesheet" href="{% static 'chatapp/css/auth.css' %}">
+</head>
+<body class="auth-page">
+  {% include "chatapp/partials/_icons.html" %}
+
+  <main class="auth-card">
+    <div class="auth-brand">
+      <span class="brand__mark"><svg class="icon icon-lg"><use href="#i-book-open"/></svg></span>
+      <span class="brand__text">
+        <span class="auth-brand__name">RAG Researcher</span>
+        <span class="auth-brand__tag">Research Paper QA</span>
+      </span>
+    </div>
+
+    <h1 class="auth-title">Sign in</h1>
+
+    <form method="post" class="auth-form">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}">
+
+      {% if form.errors %}
+        <p class="form-alert" role="alert">Your username and password didn't match. Please try again.</p>
+      {% endif %}
+
+      <div class="field">
+        <label class="field__label" for="id_username">Username</label>
+        <input class="input" type="text" name="username" id="id_username" autocomplete="username" autofocus required>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="id_password">Password</label>
+        <input class="input" type="password" name="password" id="id_password" autocomplete="current-password" required>
+      </div>
+
+      <button type="submit" class="btn btn--primary auth-form__submit">Sign in</button>
+    </form>
+  </main>
+</body>
+</html>

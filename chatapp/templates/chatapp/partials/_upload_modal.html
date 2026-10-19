@@ -1,0 +1,45 @@
+<dialog class="modal" id="upload-dialog" aria-labelledby="upload-title"
+        data-upload-dialog data-max-mb="{{ max_upload_mb }}"{% if open_upload %} data-open-on-load{% endif %}>
+  <form class="upload-form" method="post" action="{% url 'chatapp:upload_paper' %}" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ request.path }}">
+
+    <header class="modal__header">
+      <h2 class="modal__title" id="upload-title">Upload paper</h2>
+      <button type="button" class="modal__close" aria-label="Close" data-upload-close>
+        <svg class="icon"><use href="#i-x"/></svg>
+      </button>
+    </header>
+
+    <div class="modal__body">
+      {% if upload_form.non_field_errors %}
+        <p class="form-alert" role="alert">{{ upload_form.non_field_errors|join:" " }}</p>
+      {% endif %}
+
+      <div class="field">
+        <label class="field__label" for="{{ upload_form.title.id_for_label }}">
+          Title<span class="field__hint">Optional</span>
+        </label>
+        {{ upload_form.title }}
+        {% for error in upload_form.title.errors %}<p class="field__error">{{ error }}</p>{% endfor %}
+      </div>
+
+      <div class="field">
+        <span class="field__label" id="file-label">PDF file</span>
+        <label class="dropzone" data-dropzone for="{{ upload_form.file.id_for_label }}">
+          <svg class="icon icon-lg dropzone__icon"><use href="#i-upload"/></svg>
+          <span class="dropzone__text"><strong>Choose a PDF</strong> or drag it here</span>
+          <span class="dropzone__meta" data-file-name>PDF only, up to {{ max_upload_mb }} MB</span>
+        </label>
+        {{ upload_form.file }}
+        {% for error in upload_form.file.errors %}<p class="field__error">{{ error }}</p>{% endfor %}
+        <p class="field__error" data-client-error hidden></p>
+      </div>
+    </div>
+
+    <footer class="modal__footer">
+      <button type="button" class="btn btn--ghost" data-upload-close>Cancel</button>
+      <button type="submit" class="btn btn--primary" data-upload-submit>Upload paper</button>
+    </footer>
+  </form>
+</dialog>

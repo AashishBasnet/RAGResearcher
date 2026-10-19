@@ -1,0 +1,95 @@
+{% extends "chatapp/base.html" %}
+{% load static %}
+
+{% block title %}Chat · RAG Researcher{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'chatapp/css/chat.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="workspace">
+
+  <section class="panel chat-panel" aria-labelledby="chat-title">
+    <header class="panel-header">
+      <svg class="icon icon-lg panel-header__icon"><use href="#i-chat"/></svg>
+      <div>
+        <h1 class="panel-title" id="chat-title">Chat with Your Research Papers</h1>
+        <p class="panel-subtitle">Ask questions about your uploaded research papers. Get accurate answers with source citations.</p>
+      </div>
+    </header>
+
+    {# Static conversation: replace with a {% for message in messages %} loop once the backend is wired. #}
+    <div class="chat-thread" role="log" aria-live="polite">
+
+      <article class="message message--user">
+        <div class="message__body">
+          <div class="bubble bubble--user">
+            What are the main challenges of implementing RAG systems in real-world applications?
+          </div>
+          <time class="message__time">2:14 PM</time>
+        </div>
+        <span class="message__avatar"><svg class="icon"><use href="#i-user"/></svg></span>
+      </article>
+
+      <article class="message message--bot">
+        <span class="message__avatar message__avatar--bot"><svg class="icon"><use href="#i-bot"/></svg></span>
+        <div class="message__body">
+          <div class="bubble bubble--bot">
+            <p>The main challenges of implementing RAG systems in real-world applications include:</p>
+            <ol>
+              <li><strong>Retrieval Quality</strong> – Finding the most relevant and up-to-date information from large document collections can be difficult, especially with domain-specific or technical content.</li>
+              <li><strong>Context Window Limitations</strong> – LLMs have limited context windows, which can lead to loss of important information from retrieved documents.</li>
+              <li><strong>Hallucinations</strong> – Despite using external documents, models may still generate incorrect or unsupported information.</li>
+              <li><strong>Latency and Cost</strong> – Retrieving and processing external data adds computational overhead, increasing response time and cost.</li>
+              <li><strong>Evaluation and Metrics</strong> – Measuring the effectiveness of RAG systems is complex, as traditional metrics for LLMs do not fully capture retrieval and grounding quality.</li>
+            </ol>
+
+            <div class="sources">
+              <h3 class="sources__title"><svg class="icon icon-sm"><use href="#i-link"/></svg>Sources</h3>
+              <ul class="sources__list">
+                <li>
+                  <a class="source" href="#">
+                    <span class="source__index">1.</span>
+                    <span class="source__text">
+                      <span class="source__title">Retrieval-Augmented Generation: A Survey</span>
+                      <span class="source__meta">Page 5 &bull; Challenges and Future Directions</span>
+                    </span>
+                    <svg class="icon icon-sm source__open"><use href="#i-external"/></svg>
+                  </a>
+                </li>
+                <li>
+                  <a class="source" href="#">
+                    <span class="source__index">2.</span>
+                    <span class="source__text">
+                      <span class="source__title">Evaluating Large Language Models for Knowledge-Intensive Tasks</span>
+                      <span class="source__meta">Page 12 &bull; Limitations of RAG</span>
+                    </span>
+                    <svg class="icon icon-sm source__open"><use href="#i-external"/></svg>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <time class="message__time">2:14 PM</time>
+        </div>
+      </article>
+
+    </div>
+
+    <form class="chat-composer" action="#" method="post">
+      {% csrf_token %}
+      <div class="chat-composer__field">
+        <label class="visually-hidden" for="chat-input">Ask a question about your papers</label>
+        <input id="chat-input" name="question" type="text" placeholder="Ask a question about your papers..." autocomplete="off">
+        <button type="submit" class="chat-composer__send" aria-label="Send question">
+          <svg class="icon icon-sm"><use href="#i-send"/></svg>
+        </button>
+      </div>
+    </form>
+  </section>
+
+  {% include "chatapp/partials/_papers_panel.html" %}
+
+</div>
+{% endblock %}

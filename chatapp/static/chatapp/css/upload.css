@@ -1,0 +1,129 @@
+/* ==========================================================================
+   Upload Paper dialog
+   ========================================================================== */
+
+:root { --danger: #d92d20; }
+[data-theme="dark"] { --danger: #f97066; }
+
+/* ---------- Dialog ---------- */
+.modal {
+  width: min(520px, calc(100% - 32px));
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 24px 64px rgba(8, 16, 40, 0.35);
+}
+.modal::backdrop { background: rgba(5, 10, 25, 0.55); }
+
+.modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border);
+}
+.modal__title { font-size: 17px; font-weight: 700; }
+
+.modal__close {
+  display: grid;
+  place-items: center;
+  width: 32px; height: 32px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+}
+.modal__close:hover { background: var(--surface-2); color: var(--text); }
+
+.modal__body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 20px 22px;
+}
+
+.modal__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 22px;
+  border-top: 1px solid var(--border);
+}
+
+/* ---------- Form fields ---------- */
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field__label { font-size: 13px; font-weight: 600; color: var(--text); }
+.field__hint { margin-left: 8px; font-weight: 400; color: var(--text-muted); }
+.field__error,
+.form-alert { font-size: 12.5px; color: var(--danger); }
+.form-alert {
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--danger) 40%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--danger) 8%, transparent);
+}
+
+.input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-2);
+  font-size: 14px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.input::placeholder { color: var(--text-muted); }
+.input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent);
+}
+
+/* ---------- Dropzone ---------- */
+.dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 26px 16px;
+  border: 1.5px dashed var(--border);
+  border-radius: 10px;
+  background: var(--surface-2);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.dropzone:hover,
+.dropzone.is-dragover {
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 7%, var(--surface-2));
+}
+.dropzone:focus-within { outline: 2px solid var(--primary); outline-offset: 2px; }
+.dropzone.has-file { border-style: solid; border-color: var(--primary); }
+
+.dropzone__icon { color: var(--primary); margin-bottom: 4px; }
+.dropzone__text { font-size: 14px; color: var(--text-soft); }
+.dropzone__text strong { font-weight: 600; color: var(--text); }
+.dropzone__meta { font-size: 12.5px; color: var(--text-muted); word-break: break-all; }
+
+/* The real file input stays in the DOM (keyboard and form submit) but is visually hidden. */
+.dropzone__input {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  border: 0;
+}
+
+/* ---------- Secondary button ---------- */
+.btn--ghost {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-soft);
+}
+.btn--ghost:hover { background: var(--surface-2); }
+.btn:disabled { opacity: 0.65; cursor: progress; }

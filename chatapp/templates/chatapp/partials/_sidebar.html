@@ -1,0 +1,30 @@
+{% with current=request.resolver_match.url_name %}
+<aside class="sidebar" id="sidebar" aria-label="Primary">
+  <a class="brand" href="{% url 'chatapp:chat' %}">
+    <span class="brand__mark"><svg class="icon icon-lg"><use href="#i-book-open"/></svg></span>
+    <span class="brand__text">
+      <span class="brand__name">RAG Researcher</span>
+      <span class="brand__tag">Research Paper QA</span>
+    </span>
+  </a>
+
+  <nav class="nav">
+    <a class="nav__link" href="{% url 'chatapp:chat' %}"{% if current == 'chat' %} aria-current="page"{% endif %}>
+      <svg class="icon"><use href="#i-chat"/></svg>
+      <span>Chat</span>
+    </a>
+    <a class="nav__link" href="{% url 'chatapp:papers' %}"{% if current == 'papers' %} aria-current="page"{% endif %}>
+      <svg class="icon"><use href="#i-file-text"/></svg>
+      <span>Papers</span>
+    </a>
+  </nav>
+
+  <div class="sidebar__footer">
+    <div class="user">
+      <span class="avatar"><svg class="icon"><use href="#i-user"/></svg></span>
+      <span class="user__name">{{ user.get_full_name|default:user.username|default:"Aashish Basnet" }}</span>
+      <svg class="icon icon-sm user__caret"><use href="#i-chevron-down"/></svg>
+    </div>
+  </div>
+</aside>
+{% endwith %}

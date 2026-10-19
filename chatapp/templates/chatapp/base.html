@@ -1,0 +1,44 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}RAG Researcher{% endblock %}</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  {# Loaded in <head> and not deferred so the saved theme is applied before first paint. #}
+  <script src="{% static 'chatapp/js/theme.js' %}"></script>
+
+  <link rel="stylesheet" href="{% static 'chatapp/css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'chatapp/css/papers.css' %}">
+  <link rel="stylesheet" href="{% static 'chatapp/css/upload.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  {% include "chatapp/partials/_icons.html" %}
+
+  <div class="app-shell">
+    {% include "chatapp/partials/_sidebar.html" %}
+
+    <div class="app-main">
+      {% include "chatapp/partials/_topbar.html" %}
+
+      <main class="app-content">
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+
+  <div class="sidebar-backdrop" data-sidebar-backdrop></div>
+  <div class="toast" role="status" aria-live="polite" data-toast></div>
+  <div hidden data-flash>{% for message in messages %}{{ message }}{% if not forloop.last %} {% endif %}{% endfor %}</div>
+
+  <script src="{% static 'chatapp/js/main.js' %}" defer></script>
+  <script src="{% static 'chatapp/js/upload.js' %}" defer></script>
+  <script src="{% static 'chatapp/js/papers.js' %}" defer></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,46 @@
+<section class="panel papers-panel" aria-labelledby="papers-title">
+  <header class="panel-header">
+    <svg class="icon icon-lg panel-header__icon"><use href="#i-file-text"/></svg>
+    <h2 class="panel-title" id="papers-title">Your Papers</h2>
+
+    <button type="button" class="btn btn--primary papers-panel__upload" data-upload-open>
+      <svg class="icon icon-sm"><use href="#i-plus"/></svg>
+      <span>Upload Paper</span>
+    </button>
+  </header>
+
+  <ul class="papers-list">
+    {% for paper in papers %}
+      <li class="paper-item">
+ 
+  <a class="paper" href="{% url 'chatapp:paper_file' paper.pk %}" target="_blank" rel="noopener">
+          <span class="paper__icon"><svg class="icon icon-lg"><use href="#i-file-pdf"/></svg></span>
+          <span class="paper__body">
+            <span class="paper__title">{{ paper.title }}</span>
+            <span class="paper__meta">
+              {% if paper.pages %}<span class="paper__pages">{{ paper.pages }} pages</span>{% endif %}
+              {% if paper.status != "processing" %}
+                <span class="badge badge--{{ paper.status }}">{{ paper.get_status_display }}</span>
+              {% endif %}
+            </span>
+          </span>
+            <svg class="icon icon-sm paper__chevron"><use href="#i-external"/></svg>
+  </a>
+
+        <form class="paper-item__delete" method="post"
+              action="{% url 'chatapp:delete_paper' paper.pk %}"
+              data-confirm="Delete {{ paper.title }}? This cannot be undone.">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.path }}">
+          <button type="submit" aria-label="Delete {{ paper.title }}" title="Delete">
+            <svg class="icon"><use href="#i-trash"/></svg>
+          </button>
+        </form>
+      </li>
+    {% empty %}
+      <li class="papers-empty">No papers yet. Upload a PDF to start asking questions about it.</li>
+    {% endfor %}
+  </ul>
+</section>
+
+{% include "chatapp/partials/_upload_modal.html" %}

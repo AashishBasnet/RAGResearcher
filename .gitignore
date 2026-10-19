@@ -1,0 +1,24 @@
+# environment
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Environments and secrets
+venv/
+.env
+
+# Django
+db.sqlite3
+media/
+staticfiles/
+
+# RAG
+vectorstore/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
