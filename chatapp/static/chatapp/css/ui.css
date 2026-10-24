@@ -1,0 +1,176 @@
+/* ==========================================================================
+   UI additions: message actions, edit mode, collapsible sidebar and papers panel
+   ========================================================================== */
+
+/* ---------- Message meta row and action buttons ---------- */
+.message__meta { display: flex; align-items: center; gap: 8px; min-height: 26px; }
+.message--user .message__meta { justify-content: flex-end; }
+
+.message__actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+.message:hover .message__actions,
+.message:focus-within .message__actions { opacity: 1; }
+@media (hover: none) { .message__actions { opacity: 1; } }
+.message.is-streaming .message__actions { visibility: hidden; }
+
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.icon-btn:hover { background: var(--surface-2); color: var(--text); }
+.icon-btn.is-copied { color: var(--badge-ok-text); }
+
+/* While an answer is streaming, retry and edit are unavailable (copy still works). */
+.chat-thread.is-busy .icon-btn:not([data-action="copy"]) { opacity: 0.35; pointer-events: none; }
+
+/* ---------- Edit mode on a user message ---------- */
+.message.is-editing .message__body { width: min(560px, 100%); max-width: 100%; }
+.message.is-editing .message__meta { display: none; }
+
+.edit-wrap { width: 100%; }
+.edit-box {
+  width: 100%;
+  min-height: 44px;
+  max-height: 240px;
+  padding: 10px 12px;
+  border: 1px solid var(--primary);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  line-height: 1.6;
+  resize: none;
+  overflow-y: auto;
+}
+.edit-box:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent);
+}
+.edit-controls { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
+
+/* ---------- Shared collapse button ---------- */
+.collapse-btn {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.collapse-btn:hover { background: var(--surface-2); color: var(--text); }
+.panel-header .collapse-btn { margin-left: 4px; }
+
+/* ---------- Sidebar top row: brand on the left, toggle on the right ---------- */
+.sidebar__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.sidebar__top .brand { min-width: 0; margin-bottom: 0; padding-right: 0; }
+
+.sidebar-toggle {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  margin-right: 4px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--sidebar-muted);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.sidebar-toggle:hover { background: rgba(255, 255, 255, 0.08); color: #fff; }
+
+/* ---------- Papers panel: collapsed bar (hidden until collapsed) ---------- */
+.papers-rail {
+  display: none;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+}
+.papers-rail__count {
+  display: grid;
+  place-items: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 6px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: var(--surface-2);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-soft);
+}
+.papers-rail__label {
+  writing-mode: vertical-rl;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text-soft);
+}
+.papers-rail__upload { margin-top: auto; color: var(--primary); }
+
+/* The papers page has no chat beside it, so there is nothing to collapse into. */
+.workspace--single .collapse-btn--papers { display: none; }
+
+/* ---------- Desktop collapsed states ---------- */
+@media (min-width: 961px) {
+  .app-shell { transition: grid-template-columns 0.2s ease; }
+  .workspace { transition: grid-template-columns 0.2s ease; }
+
+  html[data-sidebar="collapsed"] .app-shell { grid-template-columns: 72px minmax(0, 1fr); }
+  html[data-sidebar="collapsed"] .sidebar { padding-left: 10px; padding-right: 10px; }
+  html[data-sidebar="collapsed"] .sidebar__top { flex-direction: column; gap: 14px; margin-bottom: 20px; }
+  html[data-sidebar="collapsed"] .sidebar-toggle { order: -1; margin-right: 0; }
+  html[data-sidebar="collapsed"] .brand { justify-content: center; padding: 0; }
+  html[data-sidebar="collapsed"] .brand__text,
+  html[data-sidebar="collapsed"] .nav__link span,
+  html[data-sidebar="collapsed"] .user__name,
+  html[data-sidebar="collapsed"] .user__caret { display: none; }
+  html[data-sidebar="collapsed"] .nav__link { justify-content: center; padding: 12px 0; }
+  html[data-sidebar="collapsed"] .sidebar__footer { padding-left: 0; padding-right: 0; }
+  html[data-sidebar="collapsed"] .user { justify-content: center; }
+
+  html[data-papers="collapsed"] .workspace:not(.workspace--single) {
+    grid-template-columns: minmax(0, 1fr) 56px;
+  }
+  html[data-papers="collapsed"] .workspace:not(.workspace--single) .papers-panel > .panel-header,
+  html[data-papers="collapsed"] .workspace:not(.workspace--single) .papers-panel > .papers-list {
+    display: none;
+  }
+  html[data-papers="collapsed"] .workspace:not(.workspace--single) .papers-rail { display: flex; }
+}
+
+/* On small screens the sidebar is already a slide-in menu and the panels stack. */
+@media (max-width: 960px) {
+  .sidebar-toggle,
+  .collapse-btn--papers { display: none; }
+}

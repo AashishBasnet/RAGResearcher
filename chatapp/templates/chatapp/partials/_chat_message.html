@@ -1,0 +1,44 @@
+{% if message.role == "user" %}
+<article class="message message--user" data-message-id="{{ message.id }}">
+  <div class="message__body">
+    <div class="bubble bubble--user" data-text>{{ message.content }}</div>
+    <div class="message__meta">
+      {% include "chatapp/partials/_message_actions.html" with kind="user" %}
+      <time class="message__time">{{ message.created_at|time:"g:i A" }}</time>
+    </div>
+  </div>
+  <span class="message__avatar"><svg class="icon"><use href="#i-user"/></svg></span>
+</article>
+{% else %}
+<article class="message message--bot">
+  <span class="message__avatar message__avatar--bot"><svg class="icon"><use href="#i-bot"/></svg></span>
+  <div class="message__body">
+    <div class="bubble bubble--bot">
+      <div class="bubble__text" data-markdown>{{ message.content }}</div>
+      {% if message.sources %}
+        <div class="sources">
+          <h3 class="sources__title"><svg class="icon icon-sm"><use href="#i-link"/></svg>Sources</h3>
+          <ul class="sources__list">
+            {% for source in message.sources %}
+              <li>
+                <a class="source" href="{{ source.url|default:'#' }}" target="_blank" rel="noopener">
+                  <span class="source__index">{{ forloop.counter }}.</span>
+                  <span class="source__text">
+                    <span class="source__title">{{ source.title }}</span>
+                    {% if source.page %}<span class="source__meta">Page {{ source.page }}</span>{% endif %}
+                  </span>
+                  <svg class="icon icon-sm source__open"><use href="#i-external"/></svg>
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+    </div>
+    <div class="message__meta">
+      <time class="message__time">{{ message.created_at|time:"g:i A" }}</time>
+      {% include "chatapp/partials/_message_actions.html" with kind="bot" %}
+    </div>
+  </div>
+</article>
+{% endif %}

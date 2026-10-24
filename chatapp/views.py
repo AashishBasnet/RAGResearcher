@@ -18,6 +18,85 @@ from .research_rag.vector_store import get_vector_store
 import logging
 from .research_rag.embeddings import get_embedder
 
+
+import json
+from django.http import JsonResponse, StreamingHttpResponse
+from django.urls import reverse
+
+from .models import ChatMessage, Paper
+from .research_rag import generation
+
+MAX_QUESTION_CHARS = 1000
+
+
+@login_required
+def chat_view(request):
+    recent = list(ChatMessage.objects.filter(owner=request.user).order_by("-created_at", "-id")[:50])
+    recent.reverse()
+    return render(request, "chatapp/chat.html", _page_context(request, chat_messages=recent))
+
+
+
+def _source_url(source):
+    if not source.get("paper_id"):
+        return ""
+    url = reverse("chatapp:paper_file", args=[source["paper_id"]])
+    return f"{url}#page={source['page_number']}" if source.get("page_number") else url
+
+
+@login_required
+@require_POST
+def ask_view(request):
+    question = request.POST.get("question", "").strip()
+    if not question:
+        return JsonResponse({"error": "Please type a question."}, status=400)
+    if len(question) > MAX_QUESTION_CHARS:
+        return JsonResponse({"error": f"Keep questions under {MAX_QUESTION_CHARS} characters."}, status=400)
+
+    user_id = request.user.id
+
+    recent = list(ChatMessage.objects.filter(owner_id=user_id).order_by("-created_at", "-id")[:6])
+    history = [{"role": m.role, "content": m.content} for m in reversed(recent)]
+
+    ChatMessage.objects.create(owner_id=user_id, role=ChatMessage.Role.USER, content=question)
+    def event_stream():
+        answer_parts, sources = [], []
+        try:
+            for event in generation.stream_rag_answer(question, owner_id=user_id, history=history):
+                kind = event["type"]
+                if kind == "query":
+                    logger.info("Searching for: %s", event["text"])
+                elif kind == "sources":
+                    for source in event["sources"]:
+                        source["url"] = _source_url(source)
+                    sources = event["sources"]
+                elif kind == "token":
+                    answer_parts.append(event["text"])
+                yield json.dumps(event) + "\n"
+        except Exception:
+            logger.exception("Chat answer failed")
+            yield json.dumps({"type": "error", "message": "Something went wrong while answering. Check the server terminal."}) + "\n"
+            return
+
+        ChatMessage.objects.create(owner_id=user_id, role=ChatMessage.Role.ASSISTANT,
+                                   content="".join(answer_parts), sources=sources)
+        yield json.dumps({"type": "done"}) + "\n"
+
+    response = StreamingHttpResponse(event_stream(), content_type="application/x-ndjson")
+    response["Cache-Control"] = "no-cache"
+    response["X-Accel-Buffering"] = "no"
+    return response
+
+
+@login_required
+@require_POST
+def clear_chat_view(request):
+    ChatMessage.objects.filter(owner=request.user).delete()
+    return redirect("chatapp:chat")
+
+
+
+
 def _page_context(request, form=None, **extra):
     return {
         "papers": Paper.objects.filter(owner=request.user),
@@ -34,9 +113,6 @@ def _redirect_back(request, fallback="chatapp:papers"):
     return redirect(fallback)
 
 
-@login_required
-def chat_view(request):
-    return render(request, "chatapp/chat.html", _page_context(request))
 
 
 @login_required
@@ -171,7 +247,7 @@ def pdf_ingestion_view(request):
         return HttpResponse(
             "PDF ingestion failed. Check the server terminal.",
             status=500,
-            content_type="text/plain"
+            content_type="text/plain",
         )
 
 

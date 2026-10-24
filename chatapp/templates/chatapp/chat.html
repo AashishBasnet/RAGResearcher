@@ -13,75 +13,37 @@
   <section class="panel chat-panel" aria-labelledby="chat-title">
     <header class="panel-header">
       <svg class="icon icon-lg panel-header__icon"><use href="#i-chat"/></svg>
-      <div>
+      <div class="panel-header__text">
         <h1 class="panel-title" id="chat-title">Chat with Your Research Papers</h1>
         <p class="panel-subtitle">Ask questions about your uploaded research papers. Get accurate answers with source citations.</p>
       </div>
+      <form class="chat-clear" method="post" action="{% url 'chatapp:clear_chat' %}"
+            data-confirm="Clear this whole conversation?">
+        {% csrf_token %}
+        <button type="submit" class="btn btn--ghost btn--sm">Clear chat</button>
+      </form>
     </header>
 
-    {# Static conversation: replace with a {% for message in messages %} loop once the backend is wired. #}
-    <div class="chat-thread" role="log" aria-live="polite">
+    <div class="chat-thread" id="chat-thread" role="log" aria-live="polite">
+      <p class="chat-empty" id="chat-empty"{% if chat_messages %} hidden{% endif %}>
+        {% if papers %}
+          Ask a question about your papers. Answers link to the pages they came from.
+        {% else %}
+          Upload a paper first, then ask questions about it here.
+        {% endif %}
+      </p>
 
-      <article class="message message--user">
-        <div class="message__body">
-          <div class="bubble bubble--user">
-            What are the main challenges of implementing RAG systems in real-world applications?
-          </div>
-          <time class="message__time">2:14 PM</time>
-        </div>
-        <span class="message__avatar"><svg class="icon"><use href="#i-user"/></svg></span>
-      </article>
-
-      <article class="message message--bot">
-        <span class="message__avatar message__avatar--bot"><svg class="icon"><use href="#i-bot"/></svg></span>
-        <div class="message__body">
-          <div class="bubble bubble--bot">
-            <p>The main challenges of implementing RAG systems in real-world applications include:</p>
-            <ol>
-              <li><strong>Retrieval Quality</strong> – Finding the most relevant and up-to-date information from large document collections can be difficult, especially with domain-specific or technical content.</li>
-              <li><strong>Context Window Limitations</strong> – LLMs have limited context windows, which can lead to loss of important information from retrieved documents.</li>
-              <li><strong>Hallucinations</strong> – Despite using external documents, models may still generate incorrect or unsupported information.</li>
-              <li><strong>Latency and Cost</strong> – Retrieving and processing external data adds computational overhead, increasing response time and cost.</li>
-              <li><strong>Evaluation and Metrics</strong> – Measuring the effectiveness of RAG systems is complex, as traditional metrics for LLMs do not fully capture retrieval and grounding quality.</li>
-            </ol>
-
-            <div class="sources">
-              <h3 class="sources__title"><svg class="icon icon-sm"><use href="#i-link"/></svg>Sources</h3>
-              <ul class="sources__list">
-                <li>
-                  <a class="source" href="#">
-                    <span class="source__index">1.</span>
-                    <span class="source__text">
-                      <span class="source__title">Retrieval-Augmented Generation: A Survey</span>
-                      <span class="source__meta">Page 5 &bull; Challenges and Future Directions</span>
-                    </span>
-                    <svg class="icon icon-sm source__open"><use href="#i-external"/></svg>
-                  </a>
-                </li>
-                <li>
-                  <a class="source" href="#">
-                    <span class="source__index">2.</span>
-                    <span class="source__text">
-                      <span class="source__title">Evaluating Large Language Models for Knowledge-Intensive Tasks</span>
-                      <span class="source__meta">Page 12 &bull; Limitations of RAG</span>
-                    </span>
-                    <svg class="icon icon-sm source__open"><use href="#i-external"/></svg>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <time class="message__time">2:14 PM</time>
-        </div>
-      </article>
-
+      {% for message in chat_messages %}
+        {% include "chatapp/partials/_chat_message.html" %}
+      {% endfor %}
     </div>
 
-    <form class="chat-composer" action="#" method="post">
+    <form class="chat-composer" id="chat-form" action="{% url 'chatapp:ask' %}" method="post">
       {% csrf_token %}
       <div class="chat-composer__field">
         <label class="visually-hidden" for="chat-input">Ask a question about your papers</label>
-        <input id="chat-input" name="question" type="text" placeholder="Ask a question about your papers..." autocomplete="off">
+        <input id="chat-input" name="question" type="text" maxlength="1000" required
+               placeholder="Ask a question about your papers..." autocomplete="off">
         <button type="submit" class="chat-composer__send" aria-label="Send question">
           <svg class="icon icon-sm"><use href="#i-send"/></svg>
         </button>
@@ -92,4 +54,41 @@
   {% include "chatapp/partials/_papers_panel.html" %}
 
 </div>
+
+{# Blueprints that chat.js clones for new messages #}
+<template id="tpl-user-message">
+  <article class="message message--user">
+    <div class="message__body">
+      <div class="bubble bubble--user" data-text></div>
+      <div class="message__meta">
+        {% include "chatapp/partials/_message_actions.html" with kind="user" %}
+        <time class="message__time" data-time></time>
+      </div>
+    </div>
+    <span class="message__avatar"><svg class="icon"><use href="#i-user"/></svg></span>
+  </article>
+</template>
+
+<template id="tpl-bot-message">
+  <article class="message message--bot">
+    <span class="message__avatar message__avatar--bot"><svg class="icon"><use href="#i-bot"/></svg></span>
+    <div class="message__body">
+      <div class="bubble bubble--bot">
+        <p class="bubble__status" data-status>Searching your papers<span class="dots" aria-hidden="true"></span></p>
+        <div class="bubble__text" data-text hidden></div>
+        <div class="sources" data-sources hidden>
+          <h3 class="sources__title"><svg class="icon icon-sm"><use href="#i-link"/></svg>Sources</h3>
+          <ul class="sources__list"></ul>
+        </div>
+      </div>
+      <div class="message__meta">
+        <time class="message__time" data-time></time>
+        {% include "chatapp/partials/_message_actions.html" with kind="bot" %}
+      </div>
+    </div>
+  </article>
+</template>
+{% endblock %}  
+{% block extra_js %}
+  <script src="{% static 'chatapp/js/chat.js' %}" defer></script>
 {% endblock %}

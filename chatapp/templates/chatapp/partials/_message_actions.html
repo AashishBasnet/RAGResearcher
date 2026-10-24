@@ -1,0 +1,13 @@
+<div class="message__actions">
+  <button type="button" class="icon-btn" data-action="copy" aria-label="Copy" title="Copy">
+    <svg class="icon icon-sm"><use href="#i-copy"/></svg>
+  </button>
+  {% if kind == "user" %}
+    <button type="button" class="icon-btn" data-action="edit" aria-label="Edit and resend" title="Edit">
+      <svg class="icon icon-sm"><use href="#i-edit"/></svg>
+    </button>
+  {% endif %}
+  <button type="button" class="icon-btn" data-action="retry" aria-label="Retry" title="Retry">
+    <svg class="icon icon-sm"><use href="#i-refresh"/></svg>
+  </button>
+</div>

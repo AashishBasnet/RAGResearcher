@@ -7,13 +7,17 @@
       <svg class="icon icon-sm"><use href="#i-plus"/></svg>
       <span>Upload Paper</span>
     </button>
+
+    <button type="button" class="collapse-btn collapse-btn--papers" data-papers-collapse aria-expanded="true"
+            aria-label="Hide papers panel" title="Hide papers panel">
+      <svg class="icon"><use href="#i-panel-right"/></svg>
+    </button>
   </header>
 
   <ul class="papers-list">
     {% for paper in papers %}
       <li class="paper-item">
- 
-  <a class="paper" href="{% url 'chatapp:paper_file' paper.pk %}" target="_blank" rel="noopener">
+        <a class="paper" href="{% url 'chatapp:paper_file' paper.pk %}" target="_blank" rel="noopener">
           <span class="paper__icon"><svg class="icon icon-lg"><use href="#i-file-pdf"/></svg></span>
           <span class="paper__body">
             <span class="paper__title">{{ paper.title }}</span>
@@ -24,8 +28,8 @@
               {% endif %}
             </span>
           </span>
-            <svg class="icon icon-sm paper__chevron"><use href="#i-external"/></svg>
-  </a>
+          <svg class="icon icon-sm paper__chevron"><use href="#i-external"/></svg>
+        </a>
 
         <form class="paper-item__delete" method="post"
               action="{% url 'chatapp:delete_paper' paper.pk %}"
@@ -41,6 +45,20 @@
       <li class="papers-empty">No papers yet. Upload a PDF to start asking questions about it.</li>
     {% endfor %}
   </ul>
+
+  {# Shown instead of the header and list when the panel is collapsed #}
+  <div class="papers-rail">
+    <button type="button" class="collapse-btn collapse-btn--papers" data-papers-collapse aria-expanded="true"
+            aria-label="Show papers panel" title="Show papers panel">
+      <svg class="icon"><use href="#i-panel-right"/></svg>
+    </button>
+    <span class="papers-rail__count" title="{{ papers|length }} paper{{ papers|length|pluralize }}">{{ papers|length }}</span>
+    <span class="papers-rail__label">Your Papers</span>
+    <button type="button" class="collapse-btn papers-rail__upload" data-upload-open
+            aria-label="Upload paper" title="Upload paper">
+      <svg class="icon"><use href="#i-plus"/></svg>
+    </button>
+  </div>
 </section>
 
 {% include "chatapp/partials/_upload_modal.html" %}

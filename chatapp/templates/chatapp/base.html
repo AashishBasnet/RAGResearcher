@@ -11,11 +11,13 @@
 
   {# Loaded in <head> and not deferred so the saved theme is applied before first paint. #}
   <script src="{% static 'chatapp/js/theme.js' %}"></script>
+  <script src="{% static 'chatapp/js/layout.js' %}"></script>
 
   <link rel="stylesheet" href="{% static 'chatapp/css/base.css' %}">
   <link rel="stylesheet" href="{% static 'chatapp/css/papers.css' %}">
   <link rel="stylesheet" href="{% static 'chatapp/css/upload.css' %}">
   {% block extra_css %}{% endblock %}
+  <link rel="stylesheet" href="{% static 'chatapp/css/ui.css' %}">
 </head>
 <body>
   {% include "chatapp/partials/_icons.html" %}
