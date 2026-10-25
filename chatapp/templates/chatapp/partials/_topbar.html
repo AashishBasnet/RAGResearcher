@@ -3,6 +3,12 @@
     <svg class="icon"><use href="#i-menu"/></svg>
   </button>
 
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="{% url 'chatapp:projects' %}">Projects</a>
+    <span aria-hidden="true">/</span>
+    <span class="breadcrumb__current">{{ project.name }}</span>
+  </nav>
+
   <div class="topbar__actions">
     <button type="button" class="theme-toggle" aria-label="Switch to dark mode" aria-pressed="false" data-theme-toggle>
       <svg class="icon theme-toggle__sun"><use href="#i-sun"/></svg>

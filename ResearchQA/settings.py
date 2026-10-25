@@ -100,7 +100,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LOGIN_URL = "/accounts/login/"
-LOGIN_REDIRECT_URL = "chatapp:chat"
+LOGIN_REDIRECT_URL = "chatapp:projects"
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/

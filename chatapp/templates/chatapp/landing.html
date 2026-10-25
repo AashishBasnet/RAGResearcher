@@ -1,0 +1,140 @@
+{% extends "chatapp/site_base.html" %}
+
+{% block title %}RAG Researcher · Ask your research papers anything{% endblock %}
+{% block body_class %}landing{% endblock %}
+
+{% block nav %}
+<header class="landing-nav">
+  <div class="landing-nav__inner">
+    <a class="site-brand" href="{% url 'chatapp:landing' %}">
+      <span class="brand__mark"><svg class="icon icon-lg"><use href="#i-book-open"/></svg></span>
+      <span class="site-brand__name">RAG Researcher</span>
+    </a>
+
+    <nav class="landing-nav__links" aria-label="Main">
+      <a class="landing-link" href="https://github.com/AashishBasnet" target="_blank" rel="noopener noreferrer">
+        <svg class="icon icon-sm"><use href="#i-github"/></svg><span>GitHub</span>
+      </a>
+      <a class="landing-link" href="{% url 'login' %}">Sign in</a>
+      <a class="btn btn--primary btn--sm" href="{% url 'chatapp:register' %}">Get started</a>
+    </nav>
+  </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<main>
+  <section class="hero">
+    <p class="eyebrow">Research paper Q&amp;A</p>
+    <h1 class="hero__title">
+      Ask your papers.<br>
+      <span class="gradient-text">Get answers you can verify.</span>
+    </h1>
+    <p class="hero__lead">
+      RAG Researcher turns your PDFs into a private, searchable library. Group papers into projects,
+      ask questions in plain language, and jump straight to the page every answer came from.
+    </p>
+    <div class="hero__actions">
+      <a class="btn btn--primary btn--lg" href="{% url 'chatapp:register' %}">
+        <span>Get started</span><svg class="icon icon-sm"><use href="#i-arrow-right"/></svg>
+      </a>
+      <a class="btn btn--ghost btn--lg" href="{% url 'login' %}">Sign in</a>
+    </div>
+
+    {# Decorative preview of the product #}
+    <div class="mock" aria-hidden="true">
+      <div class="mock__bar"><span></span><span></span><span></span></div>
+      <div class="mock__body">
+        <div class="mock__papers">
+          <p class="mock__heading">Your Papers</p>
+          <div class="mock__paper">
+            <span class="mock__pdf"></span>
+            <span><strong>Retrieval-Augmented Generation: A Survey</strong><em>18 pages</em></span>
+          </div>
+          <div class="mock__paper">
+            <span class="mock__pdf"></span>
+            <span><strong>Attention Is All You Need</strong><em>12 pages</em></span>
+          </div>
+          <div class="mock__paper">
+            <span class="mock__pdf"></span>
+            <span><strong>Large Language Models for Science</strong><em>20 pages</em></span>
+          </div>
+        </div>
+        <div class="mock__chat">
+          <p class="mock-bubble mock-bubble--user">What are the main challenges of implementing RAG in practice?</p>
+          <div class="mock-bubble mock-bubble--bot">
+            <p>The survey names retrieval quality, limited context windows, hallucinations, latency and cost, and evaluation as the main challenges.</p>
+            <span class="mock-source"><svg class="icon icon-sm"><use href="#i-link"/></svg>Retrieval-Augmented Generation: A Survey · Page 5</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <p class="eyebrow">How it works</p>
+    <h2 class="section__title">From a pile of PDFs to a conversation</h2>
+    <div class="steps">
+      <article class="step">
+        <span class="step__num">1</span>
+        <h3>Create a project</h3>
+        <p>Keep each topic or thesis chapter in its own project, with its own papers and its own conversation.</p>
+      </article>
+      <article class="step">
+        <span class="step__num">2</span>
+        <h3>Upload your PDFs</h3>
+        <p>Papers are read, split and indexed automatically, so they are ready to question as soon as they finish.</p>
+      </article>
+      <article class="step">
+        <span class="step__num">3</span>
+        <h3>Ask and verify</h3>
+        <p>Answers cite the paper and page, and every source opens the PDF at that exact page.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section">
+    <p class="eyebrow">Why it is different</p>
+    <h2 class="section__title">Built to be checked, not just trusted</h2>
+    <div class="features">
+      <article class="feature">
+        <span class="feature__icon"><svg class="icon"><use href="#i-link"/></svg></span>
+        <h3>Cited answers</h3>
+        <p>When your papers do not cover a question, the app says so instead of guessing.</p>
+      </article>
+      <article class="feature">
+        <span class="feature__icon"><svg class="icon"><use href="#i-lock"/></svg></span>
+        <h3>Private by project</h3>
+        <p>Each project searches only its own papers, and only you can open your files.</p>
+      </article>
+      <article class="feature">
+        <span class="feature__icon"><svg class="icon"><use href="#i-chat"/></svg></span>
+        <h3>Natural follow-ups</h3>
+        <p>Ask a follow-up like &ldquo;what about the lighter case?&rdquo; and it understands what you mean.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="cta">
+    <h2>Start with your first project</h2>
+    <p>Create an account with just a username and a password.</p>
+    <a class="btn btn--primary btn--lg" href="{% url 'chatapp:register' %}">
+      <span>Get started</span><svg class="icon icon-sm"><use href="#i-arrow-right"/></svg>
+    </a>
+  </section>
+</main>
+
+<footer class="landing-footer">
+  <div class="landing-footer__inner">
+    <p class="landing-footer__about">Built by <strong>Aashish Basnet</strong></p>
+    <div class="landing-footer__links">
+      <a href="https://github.com/AashishBasnet" target="_blank" rel="noopener noreferrer">
+        <svg class="icon icon-sm"><use href="#i-github"/></svg><span>GitHub</span>
+      </a>
+      <a href="https://www.linkedin.com/in/aashish-basnet-360289313/" target="_blank" rel="noopener noreferrer">
+        <svg class="icon icon-sm"><use href="#i-linkedin"/></svg><span>LinkedIn</span>
+      </a>
+    </div>
+  </div>
+</footer>
+{% endblock %}

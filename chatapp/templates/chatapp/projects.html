@@ -1,0 +1,117 @@
+{% extends "chatapp/site_base.html" %}
+{% load static %}
+
+{% block title %}Projects · RAG Researcher{% endblock %}
+
+{% block content %}
+<main class="site-main">
+  <header class="page-head">
+    <div>
+      <h1 class="page-title">Projects</h1>
+      <p class="page-sub">Each project keeps its own papers and its own conversation.</p>
+    </div>
+    <button type="button" class="btn btn--primary" data-project-new>
+      <svg class="icon icon-sm"><use href="#i-plus"/></svg>
+      <span>New project</span>
+    </button>
+  </header>
+
+  <ul class="project-grid">
+    <li>
+      <button type="button" class="project-card project-card--new" data-project-new>
+        <span class="project-card__plus"><svg class="icon icon-lg"><use href="#i-plus"/></svg></span>
+        <span class="project-card__new-label">Create new project</span>
+      </button>
+    </li>
+
+    {% for project in projects %}
+      <li>
+        <article class="project-card project-card--c{{ project.color_index }}">
+          <a class="project-card__link" href="{% url 'chatapp:project' project.pk %}" aria-label="Open {{ project.name }}"></a>
+
+          <div class="project-card__top">
+            <span class="project-card__icon"><svg class="icon icon-lg"><use href="#i-book-open"/></svg></span>
+
+            <div class="project-card__menu" data-menu>
+              <button type="button" class="project-card__more" aria-label="Options for {{ project.name }}"
+                      aria-haspopup="menu" aria-expanded="false" data-menu-button>
+                <svg class="icon"><use href="#i-more-vertical"/></svg>
+              </button>
+              <div class="menu" role="menu" hidden>
+                <button type="button" class="menu__item" role="menuitem" data-project-rename
+                        data-action="{% url 'chatapp:project_rename' project.pk %}"
+                        data-name="{{ project.name }}">Rename</button>
+                <form method="post" action="{% url 'chatapp:project_delete' project.pk %}"
+                      data-confirm="Delete {{ project.name }} and all of its papers and chat? This cannot be undone.">
+                  {% csrf_token %}
+                  <button type="submit" class="menu__item menu__item--danger" role="menuitem">Delete</button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h2 class="project-card__title">{{ project.name }}</h2>
+            <p class="project-card__meta">
+              {{ project.created_at|date:"j M Y" }} &middot; {{ project.paper_count }} paper{{ project.paper_count|pluralize }}
+            </p>
+          </div>
+        </article>
+      </li>
+    {% endfor %}
+  </ul>
+
+  {% if not projects %}
+    <p class="projects-empty">No projects yet. Create one, add a few PDFs, and start asking questions.</p>
+  {% endif %}
+</main>
+
+<dialog class="modal modal--small" data-dialog="create" aria-labelledby="create-title">
+  <form method="post" action="{% url 'chatapp:project_create' %}">
+    {% csrf_token %}
+    <header class="modal__header">
+      <h2 class="modal__title" id="create-title">New project</h2>
+      <button type="button" class="modal__close" aria-label="Close" data-dialog-close>
+        <svg class="icon"><use href="#i-x"/></svg>
+      </button>
+    </header>
+    <div class="modal__body">
+      <div class="field">
+        <label class="field__label" for="create-name">Project name</label>
+        <input class="input" id="create-name" name="name" type="text" maxlength="120"
+               placeholder="e.g. Thesis literature review" autocomplete="off">
+      </div>
+    </div>
+    <footer class="modal__footer">
+      <button type="button" class="btn btn--ghost" data-dialog-close>Cancel</button>
+      <button type="submit" class="btn btn--primary">Create project</button>
+    </footer>
+  </form>
+</dialog>
+
+<dialog class="modal modal--small" data-dialog="rename" aria-labelledby="rename-title">
+  <form method="post" action="" data-rename-form>
+    {% csrf_token %}
+    <header class="modal__header">
+      <h2 class="modal__title" id="rename-title">Rename project</h2>
+      <button type="button" class="modal__close" aria-label="Close" data-dialog-close>
+        <svg class="icon"><use href="#i-x"/></svg>
+      </button>
+    </header>
+    <div class="modal__body">
+      <div class="field">
+        <label class="field__label" for="rename-name">Project name</label>
+        <input class="input" id="rename-name" name="name" type="text" maxlength="120" required autocomplete="off">
+      </div>
+    </div>
+    <footer class="modal__footer">
+      <button type="button" class="btn btn--ghost" data-dialog-close>Cancel</button>
+      <button type="submit" class="btn btn--primary">Save</button>
+    </footer>
+  </form>
+</dialog>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'chatapp/js/projects.js' %}" defer></script>
+{% endblock %}

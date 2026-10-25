@@ -1,6 +1,6 @@
 <dialog class="modal" id="upload-dialog" aria-labelledby="upload-title"
         data-upload-dialog data-max-mb="{{ max_upload_mb }}"{% if open_upload %} data-open-on-load{% endif %}>
-  <form class="upload-form" method="post" action="{% url 'chatapp:upload_paper' %}" enctype="multipart/form-data" novalidate>
+  <form class="upload-form" method="post" action="{% url 'chatapp:upload_paper' project.pk %}" enctype="multipart/form-data" novalidate>
     {% csrf_token %}
     <input type="hidden" name="next" value="{{ request.path }}">
 

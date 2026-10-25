@@ -154,12 +154,12 @@ class VectorStore:
             del self.records[vector_id]
 
         self._save()
-
     def search(
         self,
-        query_embedding: np.ndarray,
-        owner_id: int,
-        k: int = 5,
+        query_embedding,
+        owner_id,
+        k=5,
+        paper_ids=None,
     ):
         results = {
             "ids": [[]],
@@ -171,6 +171,10 @@ class VectorStore:
         if self.index.ntotal == 0 or k <= 0:
             return results
 
+        # Only chunks from these papers (a project's papers) are returned.
+        # None means no project filter.
+        allowed = None if paper_ids is None else {str(pid) for pid in paper_ids}
+
         query = np.asarray(
             query_embedding, dtype=np.float32
         ).reshape(1, -1)
@@ -180,7 +184,7 @@ class VectorStore:
                 f"Expected {self.index.d}-dimensional query embedding."
             )
 
-        # Search all vectors, then filter by owner.
+        # Search all vectors, then filter by owner and project.
         # This avoids missing a user's results because another user
         # has closer vectors.
         distances, indices = self.index.search(
@@ -201,6 +205,9 @@ class VectorStore:
             metadata = record["metadata"]
 
             if str(metadata.get("owner_id")) != str(owner_id):
+                continue
+
+            if allowed is not None and str(metadata.get("paper_id")) not in allowed:
                 continue
 
             results["ids"][0].append(record["id"])

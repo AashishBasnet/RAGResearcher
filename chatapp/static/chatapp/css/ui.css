@@ -174,3 +174,44 @@
   .sidebar-toggle,
   .collapse-btn--papers { display: none; }
 }
+
+/* ---------- Project context inside the app shell ---------- */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  margin-right: auto;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+.breadcrumb a { font-weight: 500; color: var(--text-soft); }
+.breadcrumb a:hover { color: var(--primary); }
+.breadcrumb__current {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.nav__label {
+  margin: 16px 16px 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sidebar-muted);
+}
+.nav__link--back { color: var(--sidebar-muted); }
+
+@media (min-width: 961px) {
+  html[data-sidebar="collapsed"] .nav__label { display: none; }
+}
+@media (max-width: 960px) {
+  .topbar__menu { margin-right: 8px; }
+}

@@ -1,32 +1,12 @@
-{% load static %}<!DOCTYPE html>
-<html lang="en" data-theme="light">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sign in · RAG Researcher</title>
+{% extends "chatapp/site_base.html" %}
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+{% block title %}Sign in · RAG Researcher{% endblock %}
 
-  <script src="{% static 'chatapp/js/theme.js' %}"></script>
-  <link rel="stylesheet" href="{% static 'chatapp/css/base.css' %}">
-  <link rel="stylesheet" href="{% static 'chatapp/css/upload.css' %}">
-  <link rel="stylesheet" href="{% static 'chatapp/css/auth.css' %}">
-</head>
-<body class="auth-page">
-  {% include "chatapp/partials/_icons.html" %}
-
-  <main class="auth-card">
-    <div class="auth-brand">
-      <span class="brand__mark"><svg class="icon icon-lg"><use href="#i-book-open"/></svg></span>
-      <span class="brand__text">
-        <span class="auth-brand__name">RAG Researcher</span>
-        <span class="auth-brand__tag">Research Paper QA</span>
-      </span>
-    </div>
-
+{% block content %}
+<main class="auth-wrap">
+  <section class="auth-card">
     <h1 class="auth-title">Sign in</h1>
+    <p class="auth-sub">Welcome back. Pick up where you left off.</p>
 
     <form method="post" class="auth-form">
       {% csrf_token %}
@@ -46,8 +26,11 @@
         <input class="input" type="password" name="password" id="id_password" autocomplete="current-password" required>
       </div>
 
-      <button type="submit" class="btn btn--primary auth-form__submit">Sign in</button>
+      <button type="submit" class="btn btn--primary btn--block">Sign in</button>
     </form>
-  </main>
-</body>
-</html>
+
+    <div class="auth-divider"><span>New here?</span></div>
+    <a class="btn btn--outline btn--block" href="{% url 'chatapp:register' %}">No account yet? Create one</a>
+  </section>
+</main>
+{% endblock %}

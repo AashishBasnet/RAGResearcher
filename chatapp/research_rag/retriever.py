@@ -1,5 +1,5 @@
 from functools import lru_cache
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from .embeddings import EmbeddingManager, get_embedder
 from .vector_store import VectorStore, get_vector_store
@@ -18,15 +18,17 @@ class RAGRetriever:
         owner_id: int,
         top_k: int = 5,
         score_threshold: float = 0.0,
+        paper_ids: Optional[List[int]] = None,
     ) -> List[Dict[str, Any]]:
         """
-        Retrieve the chunks most relevant to a query, from one user's papers only.
+        Retrieve the chunks most relevant to a query.
 
         Args:
             query: The search query
             owner_id: Id of the user whose papers are searched
             top_k: Number of top results to return
             score_threshold: Minimum similarity score (cosine, -1 to 1) to keep a result
+            paper_ids: If given, only chunks from these papers are searched (a project's papers)
 
         Returns:
             List of dicts with id, content, metadata, similarity_score, distance, rank
@@ -34,11 +36,17 @@ class RAGRetriever:
         if not query.strip():
             raise ValueError("Query is empty.")
 
+        if paper_ids is not None and not paper_ids:
+            return []
+
         print(f"Retrieving documents for query: '{query}'")
-        print(f"Owner: {owner_id}, Top K: {top_k}, Score threshold: {score_threshold}")
+        print(f"Owner: {owner_id}, Top K: {top_k}, Score threshold: {score_threshold}, "
+              f"Papers: {'all' if paper_ids is None else len(paper_ids)}")
 
         query_embedding = self.embedding_manager.generate_embeddings([query])[0]
-        results = self.vector_store.search(query_embedding, owner_id=owner_id, k=top_k)
+        results = self.vector_store.search(
+            query_embedding, owner_id=owner_id, k=top_k, paper_ids=paper_ids
+        )
 
         retrieved_docs = []
         documents = results["documents"][0]

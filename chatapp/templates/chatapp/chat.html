@@ -1,7 +1,7 @@
 {% extends "chatapp/base.html" %}
 {% load static %}
 
-{% block title %}Chat · RAG Researcher{% endblock %}
+{% block title %}{{ project.name }} · Chat{% endblock %}
 
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'chatapp/css/chat.css' %}">
@@ -17,7 +17,7 @@
         <h1 class="panel-title" id="chat-title">Chat with Your Research Papers</h1>
         <p class="panel-subtitle">Ask questions about your uploaded research papers. Get accurate answers with source citations.</p>
       </div>
-      <form class="chat-clear" method="post" action="{% url 'chatapp:clear_chat' %}"
+      <form class="chat-clear" method="post" action="{% url 'chatapp:clear_chat' project.pk %}"
             data-confirm="Clear this whole conversation?">
         {% csrf_token %}
         <button type="submit" class="btn btn--ghost btn--sm">Clear chat</button>
@@ -27,9 +27,9 @@
     <div class="chat-thread" id="chat-thread" role="log" aria-live="polite">
       <p class="chat-empty" id="chat-empty"{% if chat_messages %} hidden{% endif %}>
         {% if papers %}
-          Ask a question about your papers. Answers link to the pages they came from.
+          Ask a question about this project's papers. Answers link to the pages they came from.
         {% else %}
-          Upload a paper first, then ask questions about it here.
+          This project is empty. Upload a paper on the right, then ask questions about it here.
         {% endif %}
       </p>
 
@@ -38,7 +38,7 @@
       {% endfor %}
     </div>
 
-    <form class="chat-composer" id="chat-form" action="{% url 'chatapp:ask' %}" method="post">
+    <form class="chat-composer" id="chat-form" action="{% url 'chatapp:ask' project.pk %}" method="post">
       {% csrf_token %}
       <div class="chat-composer__field">
         <label class="visually-hidden" for="chat-input">Ask a question about your papers</label>
@@ -88,7 +88,8 @@
     </div>
   </article>
 </template>
-{% endblock %}  
+{% endblock %}
+
 {% block extra_js %}
   <script src="{% static 'chatapp/js/chat.js' %}" defer></script>
 {% endblock %}

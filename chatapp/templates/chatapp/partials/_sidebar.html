@@ -1,7 +1,7 @@
 {% with current=request.resolver_match.url_name name=user.get_full_name|default:user.username|default:"Aashish Basnet" %}
 <aside class="sidebar" id="sidebar" aria-label="Primary">
   <div class="sidebar__top">
-    <a class="brand" href="{% url 'chatapp:chat' %}" aria-label="RAG Researcher" title="RAG Researcher">
+    <a class="brand" href="{% url 'chatapp:projects' %}" aria-label="RAG Researcher, all projects" title="All projects">
       <span class="brand__mark"><svg class="icon icon-lg"><use href="#i-book-open"/></svg></span>
       <span class="brand__text">
         <span class="brand__name">RAG Researcher</span>
@@ -16,11 +16,18 @@
   </div>
 
   <nav class="nav">
-    <a class="nav__link" href="{% url 'chatapp:chat' %}" aria-label="Chat" title="Chat"{% if current == 'chat' %} aria-current="page"{% endif %}>
+    <a class="nav__link nav__link--back" href="{% url 'chatapp:projects' %}" aria-label="All projects" title="All projects">
+      <svg class="icon"><use href="#i-arrow-left"/></svg>
+      <span>All projects</span>
+    </a>
+
+    <p class="nav__label" title="{{ project.name }}">{{ project.name }}</p>
+
+    <a class="nav__link" href="{% url 'chatapp:project' project.pk %}" aria-label="Chat" title="Chat"{% if current == 'project' %} aria-current="page"{% endif %}>
       <svg class="icon"><use href="#i-chat"/></svg>
       <span>Chat</span>
     </a>
-    <a class="nav__link" href="{% url 'chatapp:papers' %}" aria-label="Papers" title="Papers"{% if current == 'papers' %} aria-current="page"{% endif %}>
+    <a class="nav__link" href="{% url 'chatapp:project_papers' project.pk %}" aria-label="Papers" title="Papers"{% if current == 'project_papers' %} aria-current="page"{% endif %}>
       <svg class="icon"><use href="#i-file-text"/></svg>
       <span>Papers</span>
     </a>

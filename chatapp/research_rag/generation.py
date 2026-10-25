@@ -34,6 +34,15 @@ Question:
 Answer:
 """
 
+CONDENSE_PROMPT = """Given the conversation below and a follow-up question, rewrite the follow-up as a single standalone question that can be understood without the conversation. Keep all technical terms. If the follow-up is already standalone, return it unchanged. Only replace references such as "that" or "the lighter case" with what they refer to. Do not add facts or conclusions from the Assistant's earlier answers, which may be wrong. Return only the question, nothing else.
+
+Conversation:
+{history}
+
+Follow-up question: {question}
+
+Standalone question:"""
+
 
 @lru_cache(maxsize=1)
 def get_llm():
@@ -88,15 +97,6 @@ def build_context(results):
         blocks.append(f'[Excerpt {i} from "{_title(metadata)}", page {label}]\n{doc["content"]}')
     return "\n\n".join(blocks)
 
-CONDENSE_PROMPT = """Given the conversation below and a follow-up question, rewrite the follow-up as a single standalone question that can be understood without the conversation. Keep all technical terms. If the follow-up is already standalone, return it unchanged. Only replace references such as "that" or "the lighter case" with what they refer to. Do not add facts or conclusions from the Assistant's earlier answers, which may be wrong. Return only the question, nothing else.
-
-Conversation:
-{history}
-
-Follow-up question: {question}
-
-Standalone question:"""
-
 
 def _format_history(history, max_chars=500):
     lines = []
@@ -115,12 +115,25 @@ def condense_question(question, history):
     rewritten = (response.content if hasattr(response, "content") else str(response)).strip()
     return rewritten or question
 
-def stream_rag_answer(query, owner_id, history=None, top_k=8, min_score=0.35):
+
+def stream_rag_answer(query, owner_id, history=None, top_k=6, min_score=0.35, paper_ids=None):
+    """
+    Generator of events:
+      {"type": "query", "text": "..."}                       the question that was searched
+      {"type": "sources", "sources": [...], "confidence": f}
+      {"type": "token", "text": "..."}                       (many)
+
+    paper_ids limits the search to one project's papers.
+    """
     search_query = condense_question(query, history or [])
     yield {"type": "query", "text": search_query}
 
     results = get_retriever().retrieve(
-        search_query, owner_id=owner_id, top_k=top_k, score_threshold=min_score
+        search_query,
+        owner_id=owner_id,
+        top_k=top_k,
+        score_threshold=min_score,
+        paper_ids=paper_ids,
     )
 
     if not results:

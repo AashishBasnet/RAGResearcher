@@ -1,0 +1,65 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}RAG Researcher{% endblock %}</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  {# Loaded in <head> and not deferred so the saved theme is applied before first paint. #}
+  <script src="{% static 'chatapp/js/theme.js' %}"></script>
+
+  <link rel="stylesheet" href="{% static 'chatapp/css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'chatapp/css/upload.css' %}">
+  <link rel="stylesheet" href="{% static 'chatapp/css/site.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+  {% include "chatapp/partials/_icons.html" %}
+
+  {% block nav %}
+  <header class="site-nav">
+    <div class="site-nav__inner">
+      <a class="site-brand" href="{% if user.is_authenticated %}{% url 'chatapp:projects' %}{% else %}{% url 'chatapp:landing' %}{% endif %}">
+        <span class="brand__mark"><svg class="icon icon-lg"><use href="#i-book-open"/></svg></span>
+        <span class="site-brand__name">RAG Researcher</span>
+      </a>
+
+      <div class="site-nav__actions">
+        <button type="button" class="theme-toggle" aria-label="Switch to dark mode" aria-pressed="false" data-theme-toggle>
+          <svg class="icon theme-toggle__sun"><use href="#i-sun"/></svg>
+          <svg class="icon theme-toggle__moon"><use href="#i-moon"/></svg>
+        </button>
+
+        {% if user.is_authenticated %}
+          <span class="site-user">
+            <span class="avatar avatar--sm"><svg class="icon icon-sm"><use href="#i-user"/></svg></span>
+            <span class="site-user__name">{{ user.get_full_name|default:user.username }}</span>
+          </span>
+          <form method="post" action="{% url 'chatapp:logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="logout-btn">
+              <svg class="icon"><use href="#i-logout"/></svg>
+              <span>Logout</span>
+            </button>
+          </form>
+        {% else %}
+          <a class="btn btn--ghost btn--sm" href="{% url 'login' %}">Sign in</a>
+          <a class="btn btn--primary btn--sm" href="{% url 'chatapp:register' %}">Get started</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+  {% endblock %}
+
+  {% block content %}{% endblock %}
+
+  <div class="toast" role="status" aria-live="polite" data-toast></div>
+  <div hidden data-flash>{% for message in messages %}{{ message }}{% if not forloop.last %} {% endif %}{% endfor %}</div>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
